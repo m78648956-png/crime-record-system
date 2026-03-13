@@ -110,7 +110,4 @@ web-application, open-source, netlify, github-pages
 ---
 
 
-
-## 📸 Screenshots
-
 ### Public Website
