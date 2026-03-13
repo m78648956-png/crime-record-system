@@ -15,9 +15,7 @@ let viewingComplaint = null;
 
 // Default Users
 const defaultUsers = [
-    { username: 'admin', password: 'admin123', role: 'Admin', name: 'Administrator' },
-    { username: 'officer1', password: 'officer123', role: 'Officer', name: 'Inspector Raza' },
-    { username: 'officer2', password: 'off456', role: 'Officer', name: 'SI Kamran Ali' }
+    { username: 'admin123', password: 'admin123@#$%^&', role: 'Admin', name: 'Administrator' },
 ];
 
 // ===== INIT =====
