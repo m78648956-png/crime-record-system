@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Record Management System | CRMS Pakistan</title>
+    <meta name="description" content="Official Crime Record Management System - File complaints, track FIR status, and manage crime records.">
+    <meta name="theme-color" content="#0a1628">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!--                    PUBLIC WEBSITE                              -->
+<!-- ============================================================ -->
+<div id="publicSite">
+
+    <!-- Public Navbar -->
+    <nav class="pub-nav" id="pubNav">
+        <div class="pub-nav-container">
+            <a href="#" class="pub-logo">
+                <i class="fas fa-shield-halved"></i>
+                <span>CRMS</span>
+            </a>
+            <button class="pub-nav-toggle" id="pubNavToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="pub-nav-links" id="pubNavLinks">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#track">Track FIR</a></li>
+                <li><a href="#complaint">Complaint</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#" class="pub-login-btn" id="goToLogin"><i class="fas fa-lock"></i> Officer Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pub-hero" id="hero">
+        <div class="hero-particles" id="particles"></div>
+        <div class="hero-content">
+            <div class="hero-badge">🛡️ Official Crime Record Management System</div>
+            <h1>Ensuring <span class="gradient-text">Justice</span> & <span class="gradient-text">Safety</span> For All</h1>
+            <p>Advanced digital platform for crime record management, FIR tracking, and public complaint filing. Serving the people of Pakistan with transparency and efficiency.</p>
+            <div class="hero-btns">
+                <a href="#track" class="btn-hero btn-hero-primary"><i class="fas fa-search"></i> Track Your FIR</a>
+                <a href="#complaint" class="btn-hero btn-hero-outline"><i class="fas fa-pen-to-square"></i> File Complaint</a>
+            </div>
+            <div class="hero-stats-row">
+                <div class="hero-stat">
+                    <h3 id="heroTotal">0</h3>
+                    <p>Cases Registered</p>
+                </div>
+                <div class="hero-stat">
+                    <h3 id="heroSolved">0</h3>
+                    <p>Cases Solved</p>
+                </div>
+                <div class="hero-stat">
+                    <h3 id="heroOfficers">0</h3>
+                    <p>Officers Active</p>
+                </div>
+                <div class="hero-stat">
+                    <h3>24/7</h3>
+                    <p>Support Available</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="pub-section" id="about">
+        <div class="pub-container">
+            <div class="section-header">
+                <span class="section-tag">About Us</span>
+                <h2>Digital Crime Management Platform</h2>
+                <p>Modernizing law enforcement with technology for a safer Pakistan</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-icon"><i class="fas fa-database"></i></div>
+                    <h3>Centralized Database</h3>
+                    <p>All crime records stored securely in one centralized digital database accessible to authorized personnel.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon"><i class="fas fa-users-gear"></i></div>
+                    <h3>Role Based Access</h3>
+                    <p>Separate access levels for Admins, Officers, and Public ensuring data security and proper authorization.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Real-time Analytics</h3>
+                    <p>Advanced analytics dashboard providing real-time crime statistics and trend analysis.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon"><i class="fas fa-mobile-screen"></i></div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Works seamlessly on all devices - desktop, tablet and mobile. Install as app on your phone.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="pub-section pub-section-dark" id="services">
+        <div class="pub-container">
+            <div class="section-header">
+                <span class="section-tag">Our Services</span>
+                <h2>What We Offer</h2>
+                <p>Comprehensive crime management services for citizens and law enforcement</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-num">01</div>
+                    <i class="fas fa-file-circle-plus"></i>
+                    <h3>FIR Registration</h3>
+                    <p>Digital FIR registration system for quick and efficient case filing</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-num">02</div>
+                    <i class="fas fa-magnifying-glass-location"></i>
+                    <h3>FIR Tracking</h3>
+                    <p>Track your FIR status online anytime using your FIR number</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-num">03</div>
+                    <i class="fas fa-bullhorn"></i>
+                    <h3>Online Complaints</h3>
+                    <p>Submit complaints online from the comfort of your home</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-num">04</div>
+                    <i class="fas fa-user-secret"></i>
+                    <h3>Criminal Database</h3>
+                    <p>Comprehensive criminal records database for law enforcement</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-num">05</div>
+                    <i class="fas fa-file-pdf"></i>
+                    <h3>Report Generation</h3>
+                    <p>Generate detailed crime reports and analytics for analysis</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-num">06</div>
+                    <i class="fas fa-headset"></i>
+                    <h3>24/7 Support</h3>
+                    <p>Round the clock emergency support and helpline</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Track FIR Section -->
+    <section class="pub-section" id="track">
+        <div class="pub-container">
+            <div class="section-header">
+                <span class="section-tag">Track FIR</span>
+                <h2>Check Your FIR Status</h2>
+                <p>Enter your FIR number to check the current status of your case</p>
+            </div>
+            <div class="track-box">
+                <div class="track-form">
+                    <div class="track-input-wrap">
+                        <i class="fas fa-hashtag"></i>
+                        <input type="text" id="trackFIRInput" placeholder="Enter FIR Number (e.g., FIR-2024-001)">
+                    </div>
+                    <button class="btn-track" id="trackFIRBtn">
+                        <i class="fas fa-search"></i> Track Now
+                    </button>
+                </div>
+                <div id="trackResult" class="track-result" style="display:none;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Public Complaint Section -->
+    <section class="pub-section pub-section-dark" id="complaint">
+        <div class="pub-container">
+            <div class="section-header">
+                <span class="section-tag">File Complaint</span>
+                <h2>Submit Your Complaint Online</h2>
+                <p>Your complaint will be reviewed and assigned to the relevant department</p>
+            </div>
+            <div class="complaint-box">
+                <form id="publicComplaintForm">
+                    <div class="complaint-grid">
+                        <div class="form-grp">
+                            <label><i class="fas fa-user"></i> Your Full Name *</label>
+                            <input type="text" id="compName" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-grp">
+                            <label><i class="fas fa-id-card"></i> CNIC Number *</label>
+                            <input type="text" id="compCNIC" required placeholder="XXXXX-XXXXXXX-X">
+                        </div>
+                        <div class="form-grp">
+                            <label><i class="fas fa-phone"></i> Phone Number *</label>
+                            <input type="tel" id="compPhone" required placeholder="03XX-XXXXXXX">
+                        </div>
+                        <div class="form-grp">
+                            <label><i class="fas fa-envelope"></i> Email (Optional)</label>
+                            <input type="email" id="compEmail" placeholder="your@email.com">
+                        </div>
+                        <div class="form-grp">
+                            <label><i class="fas fa-gavel"></i> Complaint Type *</label>
+                            <select id="compType" required>
+                                <option value="">Select Type</option>
+                                <option value="Theft">Theft / Chori</option>
+                                <option value="Robbery">Robbery / Daketi</option>
+                                <option value="Fraud">Fraud / Dhoka</option>
+                                <option value="Harassment">Harassment</option>
+                                <option value="Cybercrime">Cybercrime</option>
+                                <option value="Missing Person">Missing Person</option>
+                                <option value="Domestic Violence">Domestic Violence</option>
+                                <option value="Drug Related">Drug Related</option>
+                                <option value="Corruption">Corruption</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-grp">
+                            <label><i class="fas fa-map-marker-alt"></i> Incident Location *</label>
+                            <input type="text" id="compLocation" required placeholder="Location of incident">
+                        </div>
+                        <div class="form-grp">
+                            <label><i class="fas fa-calendar"></i> Incident Date *</label>
+                            <input type="date" id="compDate" required>
+                        </div>
+                        <div class="form-grp">
+                            <label><i class="fas fa-exclamation-triangle"></i> Urgency Level</label>
+                            <select id="compUrgency">
+                                <option value="Normal">Normal</option>
+                                <option value="Urgent">Urgent</option>
+                                <option value="Emergency">Emergency</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grp">
+                        <label><i class="fas fa-align-left"></i> Complaint Details *</label>
+                        <textarea id="compDetails" rows="5" required placeholder="Describe the incident in detail..."></textarea>
+                    </div>
+                    <div class="complaint-actions">
+                        <button type="submit" class="btn-hero btn-hero-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Complaint
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="pub-section" id="contact">
+        <div class="pub-container">
+            <div class="section-header">
+                <span class="section-tag">Contact Us</span>
+                <h2>Get In Touch</h2>
+                <p>Reach out to us for any queries or emergency assistance</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <i class="fas fa-phone-volume"></i>
+                    <h3>Emergency Helpline</h3>
+                    <p class="contact-big">15</p>
+                    <p>Available 24/7</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-phone"></i>
+                    <h3>General Inquiry</h3>
+                    <p class="contact-big">051-9106384</p>
+                    <p>Mon - Sat, 9AM - 5PM</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Email Us</h3>
+                    <p class="contact-big">info@crms.gov.pk</p>
+                    <p>Response within 24 hours</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-location-dot"></i>
+                    <h3>Head Office</h3>
+                    <p class="contact-big">Islamabad</p>
+                    <p>Police Headquarters, G-9</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="pub-footer">
+        <div class="pub-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>CRMS</span>
+                    </div>
+                    <p>Crime Record Management System - Serving the nation with digital law enforcement solutions.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <a href="#hero">Home</a>
+                    <a href="#track">Track FIR</a>
+                    <a href="#complaint">File Complaint</a>
+                    <a href="#contact">Contact Us</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Data Protection</a>
+                    <a href="#">RTI Guidelines</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Emergency</h4>
+                    <p><i class="fas fa-phone"></i> Police: 15</p>
+                    <p><i class="fas fa-phone"></i> Rescue: 1122</p>
+                    <p><i class="fas fa-phone"></i> Fire: 16</p>
+                    <p><i class="fas fa-phone"></i> Edhi: 115</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Crime Record Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- ============================================================ -->
+<!--                    LOGIN PAGE                                  -->
+<!-- ============================================================ -->
+<div id="loginPage" style="display:none;">
+    <div class="login-page">
+        <button class="back-to-site" id="backToSite">
+            <i class="fas fa-arrow-left"></i> Back to Website
+        </button>
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-badge">
+                    <i class="fas fa-shield-halved"></i>
+                </div>
+                <h1>CRMS Portal</h1>
+                <p>Authorized Personnel Only</p>
+            </div>
+            <form id="loginForm">
+                <div class="login-input-group">
+                    <i class="fas fa-user-shield"></i>
+                    <input type="text" id="loginUsername" placeholder="Username" required autocomplete="username">
+                </div>
+                <div class="login-input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+                    <button type="button" class="toggle-pass" id="togglePass">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="login-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn-login-submit">
+                    <i class="fas fa-right-to-bracket"></i> Secure Login
+                </button>
+                <p id="loginError" class="login-error" style="display:none;"></p>
+            </form>
+            <div class="login-footer-text">
+                <p><i class="fas fa-lock"></i> 256-bit SSL Encrypted Connection</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!--                    DASHBOARD APPLICATION                       -->
+<!-- ============================================================ -->
+<div id="dashboardApp" style="display:none;">
+    <div class="app-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sb-header">
+                <i class="fas fa-shield-halved"></i>
+                <div>
+                    <h2>CRMS</h2>
+                    <span class="sb-role" id="sbRole">Admin Panel</span>
+                </div>
+            </div>
+
+            <div class="sb-user-card">
+                <div class="sb-avatar" id="sbAvatar">A</div>
+                <div>
+                    <p class="sb-user-name" id="sbUserName">Admin</p>
+                    <p class="sb-user-role" id="sbUserRole">Administrator</p>
+                </div>
+            </div>
+
+            <nav class="sb-nav">
+                <p class="sb-nav-title">MAIN MENU</p>
+                <a href="#" class="sb-link active" data-page="dashboard">
+                    <i class="fas fa-chart-pie"></i><span>Dashboard</span>
+                </a>
+                <a href="#" class="sb-link" data-page="addRecord">
+                    <i class="fas fa-plus-circle"></i><span>New FIR</span>
+                </a>
+                <a href="#" class="sb-link" data-page="allRecords">
+                    <i class="fas fa-folder-open"></i><span>All Records</span>
+                </a>
+                <a href="#" class="sb-link" data-page="criminals">
+                    <i class="fas fa-user-lock"></i><span>Criminals</span>
+                </a>
+
+                <p class="sb-nav-title admin-only">ADMIN</p>
+                <a href="#" class="sb-link admin-only" data-page="officers">
+                    <i class="fas fa-users-gear"></i><span>Officers</span>
+                </a>
+                <a href="#" class="sb-link admin-only" data-page="complaints">
+                    <i class="fas fa-bullhorn"></i><span>Complaints<span class="sb-badge" id="complaintBadge">0</span></span>
+                </a>
+
+                <p class="sb-nav-title">TOOLS</p>
+                <a href="#" class="sb-link" data-page="search">
+                    <i class="fas fa-magnifying-glass"></i><span>Search</span>
+                </a>
+                <a href="#" class="sb-link" data-page="reports">
+                    <i class="fas fa-chart-bar"></i><span>Reports</span>
+                </a>
+                <a href="#" class="sb-link admin-only" data-page="activityLog">
+                    <i class="fas fa-clock-rotate-left"></i><span>Activity Log</span>
+                </a>
+            </nav>
+
+            <div class="sb-footer">
+                <button class="sb-theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i><span>Dark Mode</span>
+                </button>
+                <button class="sb-logout" id="logoutBtn">
+                    <i class="fas fa-right-from-bracket"></i><span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Overlay for mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main -->
+        <main class="app-main">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="tb-menu" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h2 class="tb-title" id="pageTitle">Dashboard</h2>
+                </div>
+                <div class="topbar-right">
+                    <div class="tb-search-mini">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Quick search..." id="quickSearch">
+                    </div>
+                    <button class="tb-icon-btn" id="notifBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="tb-notif-dot" id="notifDot"></span>
+                    </button>
+                    <div class="tb-user">
+                        <div class="tb-avatar" id="tbAvatar">A</div>
+                        <span id="tbUserName">Admin</span>
+                    </div>
+                    <span class="tb-date" id="tbDate"></span>
+                </div>
+            </header>
+
+            <!-- Notification Panel -->
+            <div class="notif-panel" id="notifPanel" style="display:none;">
+                <h4><i class="fas fa-bell"></i> Notifications</h4>
+                <div id="notifList"></div>
+            </div>
+
+            <!-- ===== DASHBOARD PAGE ===== -->
+            <section id="pg-dashboard" class="pg active">
+                <div class="stats-row">
+                    <div class="stat-card sc-blue">
+                        <div class="sc-icon"><i class="fas fa-file-alt"></i></div>
+                        <div class="sc-info"><h3 id="stTotal">0</h3><p>Total Cases</p></div>
+                        <div class="sc-trend"><i class="fas fa-arrow-up"></i></div>
+                    </div>
+                    <div class="stat-card sc-yellow">
+                        <div class="sc-icon"><i class="fas fa-folder-open"></i></div>
+                        <div class="sc-info"><h3 id="stOpen">0</h3><p>Open</p></div>
+                        <div class="sc-trend"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+                    <div class="stat-card sc-purple">
+                        <div class="sc-icon"><i class="fas fa-search"></i></div>
+                        <div class="sc-info"><h3 id="stInvestigation">0</h3><p>Investigating</p></div>
+                        <div class="sc-trend"><i class="fas fa-arrow-up"></i></div>
+                    </div>
+                    <div class="stat-card sc-green">
+                        <div class="sc-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="sc-info"><h3 id="stSolved">0</h3><p>Solved</p></div>
+                        <div class="sc-trend"><i class="fas fa-arrow-up"></i></div>
+                    </div>
+                    <div class="stat-card sc-red">
+                        <div class="sc-icon"><i class="fas fa-times-circle"></i></div>
+                        <div class="sc-info"><h3 id="stClosed">0</h3><p>Closed</p></div>
+                        <div class="sc-trend"><i class="fas fa-minus"></i></div>
+                    </div>
+                    <div class="stat-card sc-orange">
+                        <div class="sc-icon"><i class="fas fa-user-lock"></i></div>
+                        <div class="sc-info"><h3 id="stCriminals">0</h3><p>Criminals</p></div>
+                        <div class="sc-trend"><i class="fas fa-arrow-up"></i></div>
+                    </div>
+                </div>
+
+                <div class="dash-grid">
+                    <div class="card">
+                        <div class="card-head">
+                            <h3><i class="fas fa-list"></i> Recent Cases</h3>
+                            <a href="#" class="card-link" onclick="navigateTo('allRecords')">View All →</a>
+                        </div>
+                        <div class="tbl-wrap">
+                            <table><thead><tr>
+                                <th>FIR #</th><th>Type</th><th>Victim</th><th>Date</th><th>Priority</th><th>Status</th>
+                            </tr></thead><tbody id="recentTable"></tbody></table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <h3><i class="fas fa-chart-bar"></i> Crime Analysis</h3>
+                        </div>
+                        <div id="chartArea"></div>
+                        <div class="chart-legend" id="chartLegend"></div>
+                    </div>
+                </div>
+
+                <div class="dash-grid">
+                    <div class="card">
+                        <div class="card-head">
+                            <h3><i class="fas fa-exclamation-triangle"></i> Critical Cases</h3>
+                        </div>
+                        <div class="tbl-wrap">
+                            <table><thead><tr>
+                                <th>FIR #</th><th>Type</th><th>Location</th><th>Status</th>
+                            </tr></thead><tbody id="criticalTable"></tbody></table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <h3><i class="fas fa-clock-rotate-left"></i> Recent Activity</h3>
+                        </div>
+                        <div class="activity-feed" id="recentActivity"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== ADD RECORD PAGE ===== -->
+            <section id="pg-addRecord" class="pg">
+                <div class="card form-card">
+                    <div class="card-head">
+                        <h3 id="formTitle"><i class="fas fa-plus-circle"></i> Register New FIR</h3>
+                    </div>
+                    <form id="crimeForm">
+                        <div class="form-steps">
+                            <div class="step active" data-step="1"><span>1</span> Case Info</div>
+                            <div class="step" data-step="2"><span>2</span> People</div>
+                            <div class="step" data-step="3"><span>3</span> Details</div>
+                        </div>
+
+                        <!-- Step 1 -->
+                        <div class="form-step-content active" id="step1">
+                            <div class="fg-grid">
+                                <div class="fg">
+                                    <label>FIR Number *</label>
+                                    <input type="text" id="firNumber" required placeholder="FIR-2024-XXX">
+                                </div>
+                                <div class="fg">
+                                    <label>Crime Type *</label>
+                                    <select id="crimeType" required>
+                                        <option value="">Select Type</option>
+                                        <option>Theft</option><option>Robbery</option>
+                                        <option>Murder</option><option>Assault</option>
+                                        <option>Fraud</option><option>Kidnapping</option>
+                                        <option>Cybercrime</option><option>Drug Offense</option>
+                                        <option>Domestic Violence</option><option>Harassment</option>
+                                        <option>Terrorism</option><option>Missing Person</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                                <div class="fg">
+                                    <label>Date of Crime *</label>
+                                    <input type="date" id="crimeDate" required>
+                                </div>
+                                <div class="fg">
+                                    <label>Time</label>
+                                    <input type="time" id="crimeTime">
+                                </div>
+                                <div class="fg">
+                                    <label>Location *</label>
+                                    <input type="text" id="crimeLocation" required placeholder="Incident location">
+                                </div>
+                                <div class="fg">
+                                    <label>Priority *</label>
+                                    <select id="crimePriority" required>
+                                        <option value="Low">Low</option>
+                                        <option value="Medium" selected>Medium</option>
+                                        <option value="High">High</option>
+                                        <option value="Critical">Critical</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-nav">
+                                <span></span>
+                                <button type="button" class="btn-main" onclick="goStep(2)">Next <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="form-step-content" id="step2">
+                            <div class="fg-grid">
+                                <div class="fg">
+                                    <label>Victim Name *</label>
+                                    <input type="text" id="victimName" required placeholder="Full name">
+                                </div>
+                                <div class="fg">
+                                    <label>Victim Contact</label>
+                                    <input type="text" id="victimContact" placeholder="Phone number">
+                                </div>
+                                <div class="fg">
+                                    <label>Victim CNIC</label>
+                                    <input type="text" id="victimCNIC" placeholder="XXXXX-XXXXXXX-X">
+                                </div>
+                                <div class="fg">
+                                    <label>Victim Address</label>
+                                    <input type="text" id="victimAddress" placeholder="Address">
+                                </div>
+                                <div class="fg">
+                                    <label>Suspect Name</label>
+                                    <input type="text" id="suspectName" placeholder="If known">
+                                </div>
+                                <div class="fg">
+                                    <label>Suspect Description</label>
+                                    <input type="text" id="suspectDesc" placeholder="Physical description">
+                                </div>
+                                <div class="fg">
+                                    <label>Investigating Officer *</label>
+                                    <input type="text" id="officerName" required placeholder="Officer name">
+                                </div>
+                                <div class="fg">
+                                    <label>Police Station</label>
+                                    <input type="text" id="policeStation" placeholder="Station name">
+                                </div>
+                            </div>
+                            <div class="form-nav">
+                                <button type="button" class="btn-secondary-main" onclick="goStep(1)"><i class="fas fa-arrow-left"></i> Previous</button>
+                                <button type="button" class="btn-main" onclick="goStep(3)">Next <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="form-step-content" id="step3">
+                            <div class="fg-grid">
+                                <div class="fg">
+                                    <label>Case Status *</label>
+                                    <select id="caseStatus" required>
+                                        <option value="Open">Open</option>
+                                        <option value="Under Investigation">Under Investigation</option>
+                                        <option value="Solved">Solved</option>
+                                        <option value="Closed">Closed</option>
+                                    </select>
+                                </div>
+                                <div class="fg">
+                                    <label>Evidence</label>
+                                    <input type="text" id="evidence" placeholder="List evidence items">
+                                </div>
+                                <div class="fg">
+                                    <label>Witnesses</label>
+                                    <input type="text" id="witnesses" placeholder="Witness names">
+                                </div>
+                                <div class="fg">
+                                    <label>Weapon Used</label>
+                                    <input type="text" id="weaponUsed" placeholder="If applicable">
+                                </div>
+                            </div>
+                            <div class="fg">
+                                <label>Detailed Description *</label>
+                                <textarea id="crimeDescription" rows="5" required placeholder="Describe the incident in detail..."></textarea>
+                            </div>
+                            <div class="fg">
+                                <label>Officer Notes</label>
+                                <textarea id="officerNotes" rows="3" placeholder="Internal notes..."></textarea>
+                            </div>
+                            <div class="form-nav">
+                                <button type="button" class="btn-secondary-main" onclick="goStep(2)"><i class="fas fa-arrow-left"></i> Previous</button>
+                                <button type="submit" class="btn-main btn-success" id="submitBtn">
+                                    <i class="fas fa-save"></i> Save FIR Record
+                                </button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="editId" value="">
+                    </form>
+                </div>
+            </section>
+
+            <!-- ===== ALL RECORDS PAGE ===== -->
+            <section id="pg-allRecords" class="pg">
+                <div class="card">
+                    <div class="card-head">
+                        <h3><i class="fas fa-folder-open"></i> All Crime Records</h3>
+                        <button class="btn-main btn-sm" onclick="exportCSV()"><i class="fas fa-download"></i> Export CSV</button>
+                    </div>
+                    <div class="filter-row">
+                        <select id="filterType"><option value="">All Types</option><option>Theft</option><option>Robbery</option><option>Murder</option><option>Assault</option><option>Fraud</option><option>Kidnapping</option><option>Cybercrime</option><option>Drug Offense</option><option>Harassment</option><option>Other</option></select>
+                        <select id="filterStatus"><option value="">All Status</option><option>Open</option><option>Under Investigation</option><option>Solved</option><option>Closed</option></select>
+                        <select id="filterPriority"><option value="">All Priority</option><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
+                        <input type="date" id="filterDateFrom" title="From Date">
+                        <input type="date" id="filterDateTo" title="To Date">
+                        <button class="btn-main btn-sm" id="applyFilter"><i class="fas fa-filter"></i> Filter</button>
+                        <button class="btn-secondary-main btn-sm" id="clearFilter"><i class="fas fa-times"></i> Clear</button>
+                    </div>
+                    <div class="records-count" id="recordsCount"></div>
+                    <div class="tbl-wrap"><table>
+                        <thead><tr>
+                            <th>FIR #</th><th>Crime</th><th>Date</th><th>Location</th><th>Victim</th><th>Suspect</th><th>Priority</th><th>Status</th><th>Actions</th>
+                        </tr></thead>
+                        <tbody id="allRecordsTable"></tbody>
+                    </table></div>
+                    <p id="noRecords" class="empty-state" style="display:none;"><i class="fas fa-inbox"></i><br>No records found</p>
+                </div>
+            </section>
+
+            <!-- ===== CRIMINALS PAGE ===== -->
+            <section id="pg-criminals" class="pg">
+                <div class="card">
+                    <div class="card-head">
+                        <h3><i class="fas fa-user-lock"></i> Criminal Records</h3>
+                        <button class="btn-main btn-sm" id="showAddCriminal"><i class="fas fa-user-plus"></i> Add Criminal</button>
+                    </div>
+                    <div id="criminalFormWrap" style="display:none;" class="inner-form">
+                        <form id="criminalForm">
+                            <div class="fg-grid">
+                                <div class="fg"><label>Full Name *</label><input type="text" id="cName" required placeholder="Criminal name"></div>
+                                <div class="fg"><label>CNIC</label><input type="text" id="cCNIC" placeholder="CNIC Number"></div>
+                                <div class="fg"><label>Age</label><input type="number" id="cAge" placeholder="Age"></div>
+                                <div class="fg"><label>Gender</label><select id="cGender"><option>Male</option><option>Female</option><option>Other</option></select></div>
+                                <div class="fg"><label>Address</label><input type="text" id="cAddress" placeholder="Address"></div>
+                                <div class="fg"><label>Crime History</label><input type="text" id="cHistory" placeholder="Previous crimes"></div>
+                                <div class="fg"><label>Status</label><select id="cStatus"><option>Wanted</option><option>Arrested</option><option>Released on Bail</option><option>Convicted</option><option>Absconding</option></select></div>
+                                <div class="fg"><label>Related FIR</label><input type="text" id="cFIR" placeholder="FIR Number"></div>
+                            </div>
+                            <div class="fg"><label>Description</label><textarea id="cDesc" rows="3" placeholder="Additional notes..."></textarea></div>
+                            <div class="form-nav">
+                                <button type="button" class="btn-secondary-main" id="cancelCriminal">Cancel</button>
+                                <button type="submit" class="btn-main"><i class="fas fa-save"></i> Save</button>
+                            </div>
+                            <input type="hidden" id="editCriminalId" value="">
+                        </form>
+                    </div>
+                    <div class="tbl-wrap"><table>
+                        <thead><tr><th>Name</th><th>CNIC</th><th>Age</th><th>Gender</th><th>Crime History</th><th>Status</th><th>Related FIR</th><th>Actions</th></tr></thead>
+                        <tbody id="criminalsTable"></tbody>
+                    </table></div>
+                    <p id="noCriminals" class="empty-state" style="display:none;"><i class="fas fa-user-slash"></i><br>No criminal records</p>
+                </div>
+            </section>
+
+            <!-- ===== OFFICERS PAGE (Admin Only) ===== -->
+            <section id="pg-officers" class="pg">
+                <div class="card">
+                    <div class="card-head">
+                        <h3><i class="fas fa-users-gear"></i> Officer Management</h3>
+                        <button class="btn-main btn-sm" id="showAddOfficer"><i class="fas fa-user-plus"></i> Add Officer</button>
+                    </div>
+                    <div id="officerFormWrap" style="display:none;" class="inner-form">
+                        <form id="officerForm">
+                            <div class="fg-grid">
+                                <div class="fg"><label>Full Name *</label><input type="text" id="oName" required></div>
+                                <div class="fg"><label>Badge Number *</label><input type="text" id="oBadge" required></div>
+                                <div class="fg"><label>Rank</label><select id="oRank"><option>Constable</option><option>Head Constable</option><option>ASI</option><option>SI</option><option>Inspector</option><option>DSP</option><option>SSP</option><option>DIG</option><option>IG</option></select></div>
+                                <div class="fg"><label>Phone</label><input type="text" id="oPhone"></div>
+                                <div class="fg"><label>Station</label><input type="text" id="oStation"></div>
+                                <div class="fg"><label>Username (for login)</label><input type="text" id="oUsername"></div>
+                                <div class="fg"><label>Password</label><input type="password" id="oPassword"></div>
+                                <div class="fg"><label>Status</label><select id="oStatus"><option>Active</option><option>On Leave</option><option>Suspended</option><option>Retired</option></select></div>
+                            </div>
+                            <div class="form-nav">
+                                <button type="button" class="btn-secondary-main" id="cancelOfficer">Cancel</button>
+                                <button type="submit" class="btn-main"><i class="fas fa-save"></i> Save Officer</button>
+                            </div>
+                            <input type="hidden" id="editOfficerId" value="">
+                        </form>
+                    </div>
+                    <div class="tbl-wrap"><table>
+                        <thead><tr><th>Name</th><th>Badge #</th><th>Rank</th><th>Station</th><th>Phone</th><th>Cases</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="officersTable"></tbody>
+                    </table></div>
+                </div>
+            </section>
+
+            <!-- ===== COMPLAINTS PAGE (Admin Only) ===== -->
+            <section id="pg-complaints" class="pg">
+                <div class="card">
+                    <div class="card-head">
+                        <h3><i class="fas fa-bullhorn"></i> Public Complaints</h3>
+                        <span class="badge bg-blue" id="complaintCount">0 complaints</span>
+                    </div>
+                    <div class="tbl-wrap"><table>
+                        <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Type</th><th>Location</th><th>Date</th><th>Urgency</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="complaintsTable"></tbody>
+                    </table></div>
+                    <p id="noComplaints" class="empty-state" style="display:none;"><i class="fas fa-inbox"></i><br>No complaints</p>
+                </div>
+            </section>
+
+            <!-- ===== SEARCH PAGE ===== -->
+            <section id="pg-search" class="pg">
+                <div class="card">
+                    <div class="card-head"><h3><i class="fas fa-magnifying-glass"></i> Advanced Search</h3></div>
+                    <div class="search-box">
+                        <div class="search-input-wrap">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search by FIR #, name, location, crime type, officer...">
+                        </div>
+                        <button class="btn-main" id="searchBtn"><i class="fas fa-search"></i> Search</button>
+                    </div>
+                    <div class="search-tabs">
+                        <button class="stab active" data-target="cases" onclick="searchTab('cases',this)">Cases</button>
+                        <button class="stab" data-target="criminals" onclick="searchTab('criminals',this)">Criminals</button>
+                    </div>
+                    <div class="tbl-wrap"><table>
+                        <thead id="searchThead"><tr><th>FIR #</th><th>Type</th><th>Date</th><th>Location</th><th>Victim</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="searchResults"></tbody>
+                    </table></div>
+                    <p id="noSearch" class="empty-state"><i class="fas fa-search"></i><br>Enter keywords to search</p>
+                </div>
+            </section>
+
+            <!-- ===== REPORTS PAGE ===== -->
+            <section id="pg-reports" class="pg">
+                <div class="reports-cards">
+                    <div class="card report-card" onclick="generateSummaryReport()">
+                        <i class="fas fa-chart-pie"></i>
+                        <h3>Summary Report</h3>
+                        <p>Overall crime statistics</p>
+                    </div>
+                    <div class="card report-card" onclick="generateMonthlyReport()">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>Monthly Report</h3>
+                        <p>Month-wise breakdown</p>
+                        <input type="month" id="reportMonth" class="report-input" onclick="event.stopPropagation()">
+                    </div>
+                    <div class="card report-card" onclick="generateTypeReport()">
+                        <i class="fas fa-tags"></i>
+                        <h3>Crime Type Report</h3>
+                        <p>Analysis by crime type</p>
+                    </div>
+                    <div class="card report-card" onclick="printAllRecords()">
+                        <i class="fas fa-print"></i>
+                        <h3>Print All Records</h3>
+                        <p>Print complete database</p>
+                    </div>
+                </div>
+                <div id="reportOutput" class="card" style="display:none;">
+                    <div class="card-head">
+                        <h3><i class="fas fa-file-alt"></i> Report</h3>
+                        <button class="btn-main btn-sm" onclick="printReport()"><i class="fas fa-print"></i> Print</button>
+                    </div>
+                    <div id="reportContent"></div>
+                </div>
+            </section>
+
+            <!-- ===== ACTIVITY LOG PAGE (Admin Only) ===== -->
+            <section id="pg-activityLog" class="pg">
+                <div class="card">
+                    <div class="card-head">
+                        <h3><i class="fas fa-clock-rotate-left"></i> Activity Log</h3>
+                        <button class="btn-secondary-main btn-sm" onclick="clearActivityLog()"><i class="fas fa-trash"></i> Clear</button>
+                    </div>
+                    <div class="activity-log-list" id="activityLogList"></div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</div>
+
+<!-- ===== VIEW MODAL ===== -->
+<div id="viewModal" class="modal" style="display:none;">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3 id="modalTitle"><i class="fas fa-file-alt"></i> Case Details</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-foot">
+            <button class="btn-secondary-main" onclick="closeModal()">Close</button>
+            <button class="btn-main" onclick="printCurrentCase()"><i class="fas fa-print"></i> Print</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== COMPLAINT VIEW MODAL ===== -->
+<div id="compModal" class="modal" style="display:none;">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3><i class="fas fa-bullhorn"></i> Complaint Details</h3>
+            <button class="modal-close" onclick="closeCompModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="compModalBody"></div>
+        <div class="modal-foot">
+            <button class="btn-secondary-main" onclick="closeCompModal()">Close</button>
+            <button class="btn-main" onclick="convertToFIR()"><i class="fas fa-file-circle-plus"></i> Convert to FIR</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
