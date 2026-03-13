@@ -1103,3 +1103,639 @@ function loadSampleData() {
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
 }
+
+// ================================================================
+//  NEW FEATURES - ADD TO YOUR EXISTING app.js
+// ================================================================
+
+// ===== NEW DATA =====
+let publicUsers = JSON.parse(localStorage.getItem('crms_publicUsers')) || [];
+let uploadedFiles = {};
+let currentPublicUser = null;
+let crimeMap = null;
+let dashMap = null;
+let chartInstances = {};
+
+// City coordinates for Pakistan
+const cityCoords = {
+    'lahore': [31.5204, 74.3587], 'karachi': [24.8607, 67.0011],
+    'islamabad': [33.6844, 73.0479], 'rawalpindi': [33.5651, 73.0169],
+    'faisalabad': [31.4504, 73.1350], 'peshawar': [34.0151, 71.5249],
+    'multan': [30.1575, 71.5249], 'quetta': [30.1798, 66.9750],
+    'hyderabad': [25.3960, 68.3578], 'sialkot': [32.4945, 74.5229]
+};
+
+// ===== ADD THESE TO setupEventListeners() =====
+// Put these INSIDE your existing setupEventListeners function
+
+function setupNewEventListeners() {
+    // Registration
+    document.getElementById('goToRegister')?.addEventListener('click', e => { e.preventDefault(); showPage('registerPage'); });
+    document.getElementById('backFromRegister')?.addEventListener('click', () => showPage('publicSite'));
+    document.getElementById('goToLoginFromReg')?.addEventListener('click', e => { e.preventDefault(); showPage('loginPage'); });
+    document.getElementById('goToRegFromLogin')?.addEventListener('click', e => { e.preventDefault(); showPage('registerPage'); });
+    document.getElementById('registerForm')?.addEventListener('submit', handleRegistration);
+
+    // Public Dashboard
+    document.getElementById('pubLogout')?.addEventListener('click', () => {
+        sessionStorage.removeItem('crms_pubUser');
+        currentPublicUser = null;
+        showPage('publicSite');
+        toast('Logged out', 'info');
+    });
+    document.getElementById('pubNewComplaintForm')?.addEventListener('submit', handlePubComplaint);
+
+    // Chat
+    document.getElementById('chatToggle')?.addEventListener('click', toggleChat);
+
+    // File uploads
+    setupFileUploads();
+}
+
+// Call this at end of DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    setupNewEventListeners();
+
+    // Check public user session
+    const pubUser = sessionStorage.getItem('crms_pubUser');
+    if (pubUser) {
+        currentPublicUser = JSON.parse(pubUser);
+        showPublicDashboard();
+    }
+});
+
+// ===== MULTI-LANGUAGE SYSTEM =====
+function switchLang(lang) {
+    document.documentElement.setAttribute('data-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+
+    document.querySelectorAll(`[data-${lang}]`).forEach(el => {
+        const text = el.getAttribute(`data-${lang}`);
+        if (text) {
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = text;
+            else el.textContent = text;
+        }
+    });
+
+    if (lang === 'ur') {
+        document.body.style.direction = 'rtl';
+        document.body.style.fontFamily = "'Noto Nastaliq Urdu', 'Inter', sans-serif";
+    } else {
+        document.body.style.direction = 'ltr';
+        document.body.style.fontFamily = "'Inter', sans-serif";
+    }
+
+    localStorage.setItem('crms_lang', lang);
+}
+
+// ===== PUBLIC USER REGISTRATION =====
+function handleRegistration(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('regError');
+    const username = document.getElementById('regUsername').value.trim();
+    const password = document.getElementById('regPassword').value;
+
+    if (publicUsers.find(u => u.username === username)) {
+        errEl.textContent = 'Username already exists!';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    const user = {
+        id: Date.now().toString(),
+        name: document.getElementById('regName').value.trim(),
+        cnic: document.getElementById('regCNIC').value,
+        phone: document.getElementById('regPhone').value,
+        email: document.getElementById('regEmail').value,
+        username, password,
+        role: 'Public',
+        createdAt: new Date().toISOString()
+    };
+
+    publicUsers.push(user);
+    localStorage.setItem('crms_publicUsers', JSON.stringify(publicUsers));
+    addLog('add', `New public user registered: ${user.name}`);
+    toast('Registration successful! Please login.', 'success');
+    showPage('loginPage');
+}
+
+// ===== UPDATED LOGIN (handles public users too) =====
+// REPLACE your existing handleLogin function with this:
+function handleLogin(e) {
+    e.preventDefault();
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const role = document.getElementById('loginRole').value;
+    const errEl = document.getElementById('loginError');
+
+    if (role === 'public') {
+        const pubUser = publicUsers.find(u => u.username === username && u.password === password);
+        if (pubUser) {
+            currentPublicUser = pubUser;
+            sessionStorage.setItem('crms_pubUser', JSON.stringify(pubUser));
+            errEl.style.display = 'none';
+            showPublicDashboard();
+            toast('Welcome, ' + pubUser.name, 'success');
+        } else {
+            errEl.textContent = 'Invalid credentials!';
+            errEl.style.display = 'block';
+        }
+        return;
+    }
+
+    // Staff login (existing logic)
+    const defaultUsers = [
+        { username: 'admin', password: 'admin123', role: 'Admin', name: 'Administrator' },
+        { username: 'officer1', password: 'officer123', role: 'Officer', name: 'Inspector Raza' },
+        { username: 'officer2', password: 'off456', role: 'Officer', name: 'SI Kamran Ali' }
+    ];
+
+    let user = defaultUsers.find(u => u.username === username && u.password === password);
+    if (!user) {
+        const officer = officers.find(o => o.username === username && o.password === password);
+        if (officer) user = { username: officer.username, password: officer.password, role: 'Officer', name: officer.name };
+    }
+
+    if (user) {
+        currentUser = user;
+        sessionStorage.setItem('crms_user', JSON.stringify(user));
+        errEl.style.display = 'none';
+        addLog('login', `${user.name} logged in`);
+        showDashboard();
+        toast('Welcome, ' + user.name, 'success');
+    } else {
+        errEl.textContent = 'Invalid credentials!';
+        errEl.style.display = 'block';
+    }
+}
+
+// ===== PUBLIC DASHBOARD =====
+function showPublicDashboard() {
+    ['publicSite', 'loginPage', 'registerPage', 'dashboardApp'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+    });
+    document.getElementById('publicDashboard').style.display = 'block';
+    document.getElementById('pubDashName').textContent = currentPublicUser.name;
+    renderMyComplaints();
+    renderProfile();
+}
+
+function pubTab(tab, el) {
+    document.querySelectorAll('.pd-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.pd-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(`pd-${tab}`).classList.add('active');
+}
+
+function renderMyComplaints() {
+    const myComps = complaints.filter(c =>
+        c.cnic === currentPublicUser.cnic || c.phone === currentPublicUser.phone
+    );
+    const tbl = document.getElementById('myComplaintsTable');
+    const noC = document.getElementById('noMyComplaints');
+
+    if (myComps.length === 0) { tbl.innerHTML = ''; noC.style.display = 'block'; return; }
+    noC.style.display = 'none';
+    tbl.innerHTML = myComps.map(c => `<tr>
+        <td><strong>${c.id}</strong></td><td>${c.type}</td><td>${formatDate(c.date)}</td>
+        <td>${c.location}</td>
+        <td><span class="badge bg-${c.urgency.toLowerCase()}">${c.urgency}</span></td>
+        <td><span class="badge bg-${c.status.toLowerCase()}">${c.status}</span></td>
+    </tr>`).join('');
+}
+
+function renderProfile() {
+    const u = currentPublicUser;
+    document.getElementById('profileInfo').innerHTML = `
+        <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${u.name}</span></div>
+        <div class="detail-row"><span class="detail-label">CNIC</span><span class="detail-value">${u.cnic}</span></div>
+        <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${u.phone}</span></div>
+        <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${u.email || 'N/A'}</span></div>
+        <div class="detail-row"><span class="detail-label">Username</span><span class="detail-value">${u.username}</span></div>
+        <div class="detail-row"><span class="detail-label">Member Since</span><span class="detail-value">${new Date(u.createdAt).toLocaleDateString()}</span></div>
+    `;
+}
+
+function handlePubComplaint(e) {
+    e.preventDefault();
+    const comp = {
+        id: 'COMP-' + Date.now().toString().slice(-6),
+        name: currentPublicUser.name,
+        cnic: currentPublicUser.cnic,
+        phone: currentPublicUser.phone,
+        email: currentPublicUser.email,
+        type: document.getElementById('pCompType').value,
+        location: document.getElementById('pCompLocation').value,
+        date: document.getElementById('pCompDate').value,
+        urgency: document.getElementById('pCompUrgency').value,
+        details: document.getElementById('pCompDetails').value,
+        files: uploadedFiles['pCompFiles'] || [],
+        status: 'Pending',
+        createdAt: new Date().toISOString()
+    };
+    complaints.push(comp);
+    localStorage.setItem('crms_complaints', JSON.stringify(complaints));
+    document.getElementById('pubNewComplaintForm').reset();
+    document.getElementById('pCompFilePreview').innerHTML = '';
+    toast('Complaint submitted! ID: ' + comp.id, 'success');
+    sendEmailNotification(comp);
+    pubTab('myComplaints', document.querySelector('.pd-tab'));
+    renderMyComplaints();
+}
+
+function pdTrackFIR() {
+    const fir = document.getElementById('pdTrackInput').value.trim();
+    const r = records.find(x => x.firNumber.toLowerCase() === fir.toLowerCase());
+    document.getElementById('pdTrackResult').innerHTML = r ? `
+        <div class="track-result" style="margin-top:15px"><h3>✅ ${r.firNumber}</h3>
+        <div class="track-row"><span class="t-label">Type:</span><span class="t-value">${r.crimeType}</span></div>
+        <div class="track-row"><span class="t-label">Status:</span><span class="t-value"><span class="badge bg-${statusClass(r.status)}">${r.status}</span></span></div>
+        <div class="track-row"><span class="t-label">Officer:</span><span class="t-value">${r.officerName}</span></div>
+        <div class="track-row"><span class="t-label">Updated:</span><span class="t-value">${new Date(r.updatedAt).toLocaleString()}</span></div></div>
+    ` : '<div class="track-result" style="margin-top:15px"><h3 style="color:var(--danger)">❌ Not found</h3></div>';
+}
+
+// ===== CRIME MAP (Leaflet) =====
+function initMap(elementId, isPublic = false) {
+    const mapEl = document.getElementById(elementId);
+    if (!mapEl || mapEl._leaflet_id) return; // Already initialized
+
+    const map = L.map(elementId).setView([30.3753, 69.3451], 5); // Pakistan center
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    if (isPublic) crimeMap = map;
+    else dashMap = map;
+
+    addMapMarkers(map);
+    return map;
+}
+
+function addMapMarkers(map) {
+    if (!map) return;
+    // Clear existing
+    map.eachLayer(layer => { if (layer instanceof L.Marker) map.removeLayer(layer); });
+
+    const priorityColors = { Critical: '#ef4444', High: '#f97316', Medium: '#f59e0b', Low: '#10b981' };
+
+    records.forEach(r => {
+        let lat = r.lat || null;
+        let lng = r.lng || null;
+
+        if (!lat || !lng) {
+            // Try to find city coords from location
+            const loc = r.location.toLowerCase();
+            for (const [city, coords] of Object.entries(cityCoords)) {
+                if (loc.includes(city)) {
+                    lat = coords[0] + (Math.random() - 0.5) * 0.05;
+                    lng = coords[1] + (Math.random() - 0.5) * 0.05;
+                    break;
+                }
+            }
+        }
+
+        if (lat && lng) {
+            const color = priorityColors[r.priority] || '#3b82f6';
+            const icon = L.divIcon({
+                html: `<div style="background:${color};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>`,
+                className: 'custom-marker', iconSize: [16, 16]
+            });
+            L.marker([lat, lng], { icon }).addTo(map)
+                .bindPopup(`<b>${r.firNumber}</b><br>${r.crimeType}<br>${r.location}<br>
+                <span style="color:${color}">${r.priority}</span> | ${r.status}`);
+        }
+    });
+}
+
+function updateMap() {
+    if (crimeMap) addMapMarkers(crimeMap);
+}
+
+// Initialize maps when sections become visible
+const mapObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            if (entry.target.id === 'crimeMapView') initMap('crimeMapView', true);
+            if (entry.target.id === 'dashMapView') initMap('dashMapView', false);
+        }
+    });
+});
+document.querySelectorAll('.map-view').forEach(el => mapObserver.observe(el));
+
+// ===== ADVANCED CHARTS (Chart.js) =====
+function renderAdvancedCharts() {
+    renderPieChart();
+    renderLineChart();
+    renderBarChart();
+}
+
+function renderPieChart() {
+    const ctx = document.getElementById('pieChart');
+    if (!ctx) return;
+    if (chartInstances.pie) chartInstances.pie.destroy();
+
+    const types = {};
+    records.forEach(r => { types[r.crimeType] = (types[r.crimeType] || 0) + 1; });
+    const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#f97316', '#06b6d4', '#ec4899', '#84cc16', '#6366f1'];
+
+    chartInstances.pie = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(types),
+            datasets: [{ data: Object.values(types), backgroundColor: colors, borderWidth: 0 }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 } } } }
+        }
+    });
+}
+
+function renderLineChart() {
+    const ctx = document.getElementById('lineChart');
+    if (!ctx) return;
+    if (chartInstances.line) chartInstances.line.destroy();
+
+    const months = {};
+    records.forEach(r => {
+        const m = r.crimeDate.substring(0, 7);
+        months[m] = (months[m] || 0) + 1;
+    });
+    const sorted = Object.entries(months).sort((a, b) => a[0].localeCompare(b[0]));
+
+    chartInstances.line = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: sorted.map(([m]) => m),
+            datasets: [{
+                label: 'Cases', data: sorted.map(([, v]) => v),
+                borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.1)',
+                fill: true, tension: 0.4, pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: { x: { ticks: { color: '#64748b' }, grid: { color: '#1e3050' } }, y: { ticks: { color: '#64748b' }, grid: { color: '#1e3050' } } },
+            plugins: { legend: { labels: { color: '#94a3b8' } } }
+        }
+    });
+}
+
+function renderBarChart() {
+    const ctx = document.getElementById('barChart');
+    if (!ctx) return;
+    if (chartInstances.bar) chartInstances.bar.destroy();
+
+    const statuses = { Open: 0, 'Under Investigation': 0, Solved: 0, Closed: 0 };
+    records.forEach(r => { if (statuses.hasOwnProperty(r.status)) statuses[r.status]++; });
+
+    chartInstances.bar = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(statuses),
+            datasets: [{ label: 'Cases', data: Object.values(statuses), backgroundColor: ['#f59e0b', '#8b5cf6', '#10b981', '#ef4444'], borderRadius: 6 }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: { x: { ticks: { color: '#64748b' }, grid: { display: false } }, y: { ticks: { color: '#64748b' }, grid: { color: '#1e3050' } } },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
+
+function renderAnalyticsCharts() {
+    // Area Chart
+    const areaCtx = document.getElementById('areaChart');
+    if (areaCtx) {
+        if (chartInstances.area) chartInstances.area.destroy();
+        const months = {};
+        const types = [...new Set(records.map(r => r.crimeType))].slice(0, 5);
+        records.forEach(r => {
+            const m = r.crimeDate.substring(0, 7);
+            if (!months[m]) months[m] = {};
+            months[m][r.crimeType] = (months[m][r.crimeType] || 0) + 1;
+        });
+        const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
+        const sortedMonths = Object.keys(months).sort();
+
+        chartInstances.area = new Chart(areaCtx, {
+            type: 'line',
+            data: {
+                labels: sortedMonths,
+                datasets: types.map((type, i) => ({
+                    label: type, data: sortedMonths.map(m => months[m]?.[type] || 0),
+                    borderColor: colors[i], backgroundColor: colors[i] + '20',
+                    fill: true, tension: 0.4
+                }))
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { color: '#64748b' } }, y: { ticks: { color: '#64748b' } } }, plugins: { legend: { labels: { color: '#94a3b8' } } } }
+        });
+    }
+
+    // Doughnut
+    const dCtx = document.getElementById('doughnutChart');
+    if (dCtx) {
+        if (chartInstances.doughnut) chartInstances.doughnut.destroy();
+        const priorities = { Low: 0, Medium: 0, High: 0, Critical: 0 };
+        records.forEach(r => { if (priorities.hasOwnProperty(r.priority)) priorities[r.priority]++; });
+        chartInstances.doughnut = new Chart(dCtx, {
+            type: 'doughnut',
+            data: { labels: Object.keys(priorities), datasets: [{ data: Object.values(priorities), backgroundColor: ['#10b981', '#f59e0b', '#f97316', '#ef4444'], borderWidth: 0 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
+        });
+    }
+
+    // Polar
+    const pCtx = document.getElementById('polarChart');
+    if (pCtx) {
+        if (chartInstances.polar) chartInstances.polar.destroy();
+        const locations = {};
+        records.forEach(r => { const city = r.location.split(',')[0].trim(); locations[city] = (locations[city] || 0) + 1; });
+        const top5 = Object.entries(locations).sort((a, b) => b[1] - a[1]).slice(0, 6);
+        chartInstances.polar = new Chart(pCtx, {
+            type: 'polarArea',
+            data: { labels: top5.map(([k]) => k), datasets: [{ data: top5.map(([, v]) => v), backgroundColor: ['#3b82f620', '#ef444420', '#10b98120', '#f59e0b20', '#8b5cf620', '#f9731620'], borderColor: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#f97316'], borderWidth: 2 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } }, scales: { r: { ticks: { color: '#64748b' }, grid: { color: '#1e3050' } } } }
+        });
+    }
+}
+
+// Update refreshDashboard to include charts
+const origRefreshDashboard = typeof refreshDashboard === 'function' ? refreshDashboard : null;
+function refreshDashboard() {
+    if (origRefreshDashboard) origRefreshDashboard();
+    setTimeout(() => { renderAdvancedCharts(); }, 100);
+}
+
+// ===== FILE UPLOAD HANDLING =====
+function setupFileUploads() {
+    document.querySelectorAll('.file-input').forEach(input => {
+        input.addEventListener('change', function () {
+            const previewId = this.closest('.fg, .form-grp').querySelector('.file-preview')?.id;
+            if (!previewId) return;
+            handleFiles(this.files, previewId, this.id);
+        });
+    });
+}
+
+function handleFiles(files, previewId, inputId) {
+    const preview = document.getElementById(previewId);
+    if (!preview) return;
+    if (!uploadedFiles[inputId]) uploadedFiles[inputId] = [];
+
+    Array.from(files).forEach(file => {
+        if (file.size > 5 * 1024 * 1024) { toast('File too large (max 5MB)', 'error'); return; }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const base64 = e.target.result;
+            uploadedFiles[inputId].push({ name: file.name, data: base64, type: file.type });
+
+            const thumb = document.createElement('div');
+            thumb.className = 'file-thumb';
+            if (file.type.startsWith('image/')) {
+                thumb.innerHTML = `<img src="${base64}" alt="${file.name}"><button class="remove-file" onclick="this.parentElement.remove()">×</button>`;
+            } else {
+                thumb.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:20px"><i class="fas fa-file"></i></div><button class="remove-file" onclick="this.parentElement.remove()">×</button>`;
+            }
+            preview.appendChild(thumb);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// ===== CHAT WIDGET =====
+function toggleChat() {
+    const box = document.getElementById('chatBox');
+    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+}
+
+function sendChat() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    addChatMessage(msg, 'user');
+    input.value = '';
+
+    // Auto-reply bot
+    setTimeout(() => {
+        const reply = getChatReply(msg);
+        addChatMessage(reply, 'bot');
+    }, 1000);
+}
+
+function addChatMessage(text, type) {
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = `chat-msg ${type}`;
+    div.innerHTML = `<p>${text}</p><span class="chat-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
+
+function getChatReply(msg) {
+    const lower = msg.toLowerCase();
+    if (lower.includes('fir') && (lower.includes('track') || lower.includes('status')))
+        return 'To track your FIR, go to the "Track FIR" section on our homepage and enter your FIR number. You can also login to your dashboard.';
+    if (lower.includes('complaint') || lower.includes('shikayat'))
+        return 'You can file a complaint from our homepage or login to your dashboard. Go to the "File Complaint" section.';
+    if (lower.includes('register') || lower.includes('account'))
+        return 'Click the "Register" button on the homepage to create your public account. You need your CNIC and phone number.';
+    if (lower.includes('emergency') || lower.includes('help'))
+        return '🚨 For emergencies, call 15 (Police) or 1122 (Rescue) immediately. For non-emergency, use our complaint form.';
+    if (lower.includes('officer') || lower.includes('login'))
+        return 'Officers can login through the "Officer Login" button. Contact your admin for credentials.';
+    if (lower.includes('hi') || lower.includes('hello') || lower.includes('salam'))
+        return 'Hello! Welcome to CRMS Support. How can I assist you today? You can ask about FIR tracking, complaints, registration, or emergencies.';
+    return 'Thank you for your message. For specific assistance:\n• FIR tracking - use our Track FIR section\n• File complaint - use Complaint form\n• Emergency - Call 15\n\nIs there anything specific you need help with?';
+}
+
+// ===== EMAIL NOTIFICATIONS (EmailJS) =====
+function sendEmailNotification(data) {
+    const config = JSON.parse(localStorage.getItem('crms_emailConfig') || '{}');
+    if (!config.serviceId || !config.templateId || !config.publicKey) return;
+
+    try {
+        emailjs.init(config.publicKey);
+        emailjs.send(config.serviceId, config.templateId, {
+            to_name: data.name || 'User',
+            to_email: data.email || '',
+            complaint_id: data.id || '',
+            type: data.type || '',
+            status: data.status || 'Submitted',
+            message: `Your complaint ${data.id} has been submitted successfully.`
+        }).then(() => console.log('Email sent'))
+            .catch(err => console.log('Email error:', err));
+    } catch (e) { console.log('EmailJS not configured'); }
+}
+
+function saveEmailConfig() {
+    const config = {
+        serviceId: document.getElementById('ejServiceId').value,
+        templateId: document.getElementById('ejTemplateId').value,
+        publicKey: document.getElementById('ejPublicKey').value
+    };
+    localStorage.setItem('crms_emailConfig', JSON.stringify(config));
+    toast('Email config saved!', 'success');
+}
+
+function saveSMSConfig() {
+    const config = {
+        phone: document.getElementById('smsPhone').value,
+        template: document.getElementById('smsTemplate').value
+    };
+    localStorage.setItem('crms_smsConfig', JSON.stringify(config));
+    toast('SMS config saved!', 'success');
+}
+
+// ===== FIREBASE CONNECTION =====
+function connectFirebase() {
+    const config = {
+        apiKey: document.getElementById('fbApiKey').value,
+        authDomain: document.getElementById('fbAuthDomain').value,
+        projectId: document.getElementById('fbProjectId').value,
+        storageBucket: document.getElementById('fbStorageBucket').value
+    };
+
+    if (!config.apiKey || !config.projectId) {
+        toast('Please fill Firebase config!', 'error');
+        return;
+    }
+
+    try {
+        if (!firebase.apps.length) firebase.initializeApp(config);
+        const db = firebase.firestore();
+
+        // Sync data to Firebase
+        db.collection('records').get().then(snapshot => {
+            if (snapshot.empty) {
+                // Upload local data
+                records.forEach(r => db.collection('records').doc(r.id).set(r));
+                criminals.forEach(c => db.collection('criminals').doc(c.id).set(c));
+                toast('Data synced to Firebase!', 'success');
+            } else {
+                // Download from Firebase
+                const fbRecords = [];
+                snapshot.forEach(doc => fbRecords.push(doc.data()));
+                records = fbRecords;
+                save();
+                toast('Data loaded from Firebase!', 'success');
+            }
+        });
+
+        localStorage.setItem('crms_firebase', JSON.stringify(config));
+        document.getElementById('fbStatus').innerHTML = '<span style="color:var(--success)">✅ Connected</span>';
+        addLog('add', 'Firebase connected');
+    } catch (e) {
+        document.getElementById('fbStatus').innerHTML = '<span style="color:var(--danger)">❌ Error</span>';
+        toast('Firebase connection failed!', 'error');
+    }
+}
+
+// ===== DATA IMPORT/EXPORT =====
+function exportAllData() {
+    const data = { records, criminals, officers, complaints, activityLog, publicUsers };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { 
+
